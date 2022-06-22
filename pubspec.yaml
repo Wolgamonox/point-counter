@@ -31,5 +31,7 @@ flutter_icons:
   flutter_lints: ^1.0.0
 
 flutter:
+  assets:
+    - assets/google_fonts/
 
   uses-material-design: true
