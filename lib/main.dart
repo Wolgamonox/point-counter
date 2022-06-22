@@ -85,6 +85,12 @@ class _HomePageState extends State<HomePage>
   ));
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -206,6 +212,11 @@ class _CustomAddButtonState extends State<CustomAddButton> {
             decoration: const InputDecoration(hintText: "Enter custom amount"),
             controller: _customAmountController,
             keyboardType: TextInputType.number,
+            onSubmitted: (_) {
+              int? number = int.tryParse(_customAmountController.text);
+              _customAmountController.clear();
+              Navigator.of(context).pop(number);
+            },
           ),
           actions: <Widget>[
             TextButton(
