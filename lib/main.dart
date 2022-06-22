@@ -1,7 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Point counter',
       theme: ThemeData(
         primarySwatch: Colors.teal,
+        textTheme: GoogleFonts.orbitronTextTheme(),
       ),
       home: const HomePage(title: 'Point Counter'),
     );
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _counter = 0;
 
-  int undoQueueSize = 5;
+  int undoQueueSize = 10;
   final Queue<int> _lastNumbers = Queue<int>();
 
   void _updateLastNumbers(int number) {
@@ -66,6 +67,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _resetCounter() {
+    _updateLastNumbers(_counter);
     setState(() {
       _counter = 0;
     });
@@ -94,12 +96,18 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            fontSize: 20,
+          ),
+        ),
         actions: <Widget>[
           IconButton(
             onPressed: _undo,
             icon: const Icon(Icons.undo),
           ),
+          const SizedBox(width: 5.0),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetCounter,
@@ -122,8 +130,7 @@ class _HomePageState extends State<HomePage>
                   child: Text(
                     '$_counter',
                     style: const TextStyle(
-                      fontSize: 100.0,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 120.0,
                       color: Colors.black,
                     ),
                   ),
@@ -139,6 +146,15 @@ class _HomePageState extends State<HomePage>
                     SimpleAddButton(number: 1, addFunc: _addToCounter),
                     SimpleAddButton(number: 2, addFunc: _addToCounter),
                     SimpleAddButton(number: 5, addFunc: _addToCounter),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 100,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
                     CustomAddButton(addFunc: _addToCounter),
                   ],
                 ),
@@ -247,7 +263,7 @@ class _CustomAddButtonState extends State<CustomAddButton> {
           child: const Text(
             "Custom",
             style: TextStyle(
-              fontSize: kIsWeb ? 24 : 14,
+              fontSize: 30,
             ),
             softWrap: false,
           ),
