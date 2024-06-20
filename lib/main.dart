@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -57,9 +58,13 @@ class _HomePageState extends State<HomePage>
   }
 
   void _addToCounter(int num) {
-    _updateLastNumbers(_counter);
+    if (_counter != 999) {
+      _updateLastNumbers(_counter);
+    }
+
     setState(() {
       _counter += num;
+      _counter = _counter.clamp(0, 999);
     });
   }
 
@@ -78,10 +83,15 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {},
+        ),
         title: Text(
           widget.title,
           style: const TextStyle(
@@ -105,37 +115,54 @@ class _HomePageState extends State<HomePage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Expanded(
+            Expanded(
               flex: 1,
-              child: Center(child: Text("Goal: 120")),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.all(8.0),
+                width: 148.0,
+                child: const TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Goal",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
             ),
             Expanded(
               flex: 7,
               child: Center(
-                child: TextButton(
-                  onPressed: () {},
-                  child: Stack(
-                    alignment: Alignment.center,
-                    // decoration: BoxDecoration(color: Colors.brown),
-                    // padding: EdgeInsets.only(bottom: 20.0),
-                    children: [
-                      Text(
-                        '$_counter',
-                        style: const TextStyle(
-                          fontSize: 120.0,
-                          color: Colors.black,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(),
+                    SizedBox(
+                      width: 300.0,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          '$_counter',
+                          style: const TextStyle(
+                            fontSize: 100.0,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                      const SizedBox.square(
-                        dimension: 148.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 16.0,
-                          value: 0.80,
-                          strokeCap: StrokeCap.round,
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      height: 100.0,
+                      child: const RotatedBox(
+                        quarterTurns: -1,
+                        child: LinearProgressIndicator(
+                          color: Colors.green,
+                          value: 0.5,
+                          minHeight: 20,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -166,7 +193,7 @@ class _HomePageState extends State<HomePage>
                     const SizedBox(width: 8.0),
                     SimpleAddButton(number: 5, addFunc: _addToCounter),
                     const SizedBox(width: 8.0),
-                    SimpleAddButton(number: 10, addFunc: _addToCounter),
+                    SimpleAddButton(number: 100, addFunc: _addToCounter),
                   ],
                 ),
               ),
