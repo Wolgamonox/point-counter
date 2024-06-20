@@ -4,20 +4,27 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
+// import 'package:flutter/rendering.dart';
+
 void main() {
+  // debugPaintSizeEnabled=true;
   GoogleFonts.config.allowRuntimeFetching = false;
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Point counter',
       theme: ThemeData(
-        primarySwatch: Colors.teal,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          brightness: Brightness.light,
+        ),
         textTheme: GoogleFonts.orbitronTextTheme(),
       ),
       home: const HomePage(title: 'Point Counter'),
@@ -26,7 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({super.key, required this.title});
 
   final String title;
 
@@ -34,12 +41,12 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-// singletickerprovider thing is for the animation
+// single ticker provider thing is for the animation
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _counter = 0;
 
-  int undoQueueSize = 10;
+  int undoQueueSize = 20;
   final Queue<int> _lastNumbers = Queue<int>();
 
   void _updateLastNumbers(int number) {
@@ -51,9 +58,6 @@ class _HomePageState extends State<HomePage>
 
   void _addToCounter(int num) {
     _updateLastNumbers(_counter);
-    _animationController.forward().then((value) {
-      _animationController.reverse();
-    });
     setState(() {
       _counter += num;
     });
@@ -72,25 +76,6 @@ class _HomePageState extends State<HomePage>
     setState(() {
       _counter = 0;
     });
-  }
-
-  late final AnimationController _animationController = AnimationController(
-    duration: const Duration(milliseconds: 250),
-    vsync: this,
-  );
-
-  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: const Offset(0.0, 0.1),
-    end: const Offset(0.0, -0.1),
-  ).animate(CurvedAnimation(
-    parent: _animationController,
-    curve: Curves.easeOut,
-  ));
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   @override
@@ -117,51 +102,76 @@ class _HomePageState extends State<HomePage>
         ],
       ),
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              const Spacer(),
-              Center(
-                child: SlideTransition(
-                  position: _offsetAnimation,
-                  child: Text(
-                    '$_counter',
-                    style: const TextStyle(
-                      fontSize: 120.0,
-                      color: Colors.black,
-                    ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            const Expanded(
+              flex: 1,
+              child: Center(child: Text("Goal: 120")),
+            ),
+            Expanded(
+              flex: 7,
+              child: Center(
+                child: TextButton(
+                  onPressed: () {},
+                  child: Stack(
+                    alignment: Alignment.center,
+                    // decoration: BoxDecoration(color: Colors.brown),
+                    // padding: EdgeInsets.only(bottom: 20.0),
+                    children: [
+                      Text(
+                        '$_counter',
+                        style: const TextStyle(
+                          fontSize: 120.0,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox.square(
+                        dimension: 148.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 16.0,
+                          value: 0.80,
+                          strokeCap: StrokeCap.round,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const Spacer(),
-              SizedBox(
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                 height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     SimpleAddButton(number: 1, addFunc: _addToCounter),
-                    SimpleAddButton(number: 2, addFunc: _addToCounter),
-                    SimpleAddButton(number: 5, addFunc: _addToCounter),
                   ],
                 ),
               ),
-              SizedBox(
+            ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                 height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    CustomAddButton(addFunc: _addToCounter),
+                    SimpleAddButton(number: 2, addFunc: _addToCounter),
+                    const SizedBox(width: 8.0),
+                    SimpleAddButton(number: 5, addFunc: _addToCounter),
+                    const SizedBox(width: 8.0),
+                    SimpleAddButton(number: 10, addFunc: _addToCounter),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -169,8 +179,8 @@ class _HomePageState extends State<HomePage>
 }
 
 class SimpleAddButton extends StatelessWidget {
-  const SimpleAddButton({Key? key, required this.number, required this.addFunc})
-      : super(key: key);
+  const SimpleAddButton(
+      {super.key, required this.number, required this.addFunc});
 
   final int number;
   final Function(int number) addFunc;
@@ -178,102 +188,20 @@ class SimpleAddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(2.5),
-        child: ElevatedButton(
-          onPressed: () {
-            addFunc(number);
-          },
-          child: Text(
-            number.toString(),
-            style: const TextStyle(
-              fontSize: 30,
-            ),
+      child: FilledButton(
+        onPressed: () {
+          addFunc(number);
+        },
+        style: FilledButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0), // <-- Radius
           ),
         ),
-      ),
-    );
-  }
-}
-
-class CustomAddButton extends StatefulWidget {
-  const CustomAddButton({Key? key, required this.addFunc}) : super(key: key);
-
-  final Function(int number) addFunc;
-
-  @override
-  State<CustomAddButton> createState() => _CustomAddButtonState();
-}
-
-class _CustomAddButtonState extends State<CustomAddButton> {
-  late TextEditingController _customAmountController;
-
-  @override
-  void initState() {
-    _customAmountController = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _customAmountController.dispose();
-    super.dispose();
-  }
-
-  Future<int?> openDialog() => showDialog<int>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Custom add"),
-          content: TextField(
-            autofocus: true,
-            decoration: const InputDecoration(hintText: "Enter custom amount"),
-            controller: _customAmountController,
-            keyboardType: TextInputType.number,
-            onSubmitted: (_) {
-              int? number = int.tryParse(_customAmountController.text);
-              _customAmountController.clear();
-              Navigator.of(context).pop(number);
-            },
+        child: Text(
+          number.toString(),
+          style: const TextStyle(
+            fontSize: 32,
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Cancel"),
-              onPressed: () {
-                _customAmountController.clear();
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Add"),
-              onPressed: () {
-                int? number = int.tryParse(_customAmountController.text);
-                _customAmountController.clear();
-                Navigator.of(context).pop(number);
-              },
-            ),
-          ],
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(2.5),
-        child: ElevatedButton(
-          child: const Text(
-            "Custom",
-            style: TextStyle(
-              fontSize: 30,
-            ),
-            softWrap: false,
-          ),
-          onPressed: () async {
-            int? result = await openDialog();
-            if (result != null) {
-              widget.addFunc(result);
-            }
-          },
         ),
       ),
     );
