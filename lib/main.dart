@@ -1,7 +1,9 @@
 import 'dart:collection';
+import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/painting.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.teal,
           brightness: Brightness.light,
         ),
-        textTheme: GoogleFonts.orbitronTextTheme(),
+        textTheme: GoogleFonts.bebasNeueTextTheme(),
       ),
       home: const HomePage(title: 'Point Counter'),
     );
@@ -83,9 +85,10 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -111,58 +114,112 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
-      body: Center(
+      body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              flex: 1,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.all(8.0),
-                width: 148.0,
-                child: const TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Goal",
-                    border: OutlineInputBorder(),
+              flex: 2,
+              child: ScrollConfiguration(
+                behavior:
+                    ScrollConfiguration.of(context).copyWith(dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                }),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ListView.separated(
+                    controller: scrollController,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    "Player ${index + 1}",
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const Text(
+                                    "68",
+                                    style:
+                                        TextStyle(fontStyle: FontStyle.italic),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 8.0),
+                              const SizedBox.square(
+                                dimension: 30.0,
+                                child: CircularProgressIndicator(
+                                  color: Colors.green,
+                                  value: 0.87,
+                                  strokeWidth: 6.0,
+                                  strokeCap: StrokeCap.round,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const SizedBox(
+                      width: 4.0,
+                    ),
+                    itemCount: 9,
                   ),
                 ),
               ),
             ),
+            const Divider(),
             Expanded(
-              flex: 7,
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      label: Text(
+                        "120",
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      icon: const Icon(
+                        Icons.flag,
+                        size: 36.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  const SizedBox.square(
+                    dimension: 30.0,
+                    child: CircularProgressIndicator(
+                      color: Colors.green,
+                      value: 0.80,
+                      strokeCap: StrokeCap.round,
+                      strokeWidth: 8.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 8,
               child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(),
-                    SizedBox(
-                      width: 300.0,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          '$_counter',
-                          style: const TextStyle(
-                            fontSize: 100.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      height: 100.0,
-                      child: const RotatedBox(
-                        quarterTurns: -1,
-                        child: LinearProgressIndicator(
-                          color: Colors.green,
-                          value: 0.5,
-                          minHeight: 20,
-                        ),
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  '$_counter',
+                  style: const TextStyle(
+                    fontSize: 150.0,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -193,7 +250,7 @@ class _HomePageState extends State<HomePage>
                     const SizedBox(width: 8.0),
                     SimpleAddButton(number: 5, addFunc: _addToCounter),
                     const SizedBox(width: 8.0),
-                    SimpleAddButton(number: 100, addFunc: _addToCounter),
+                    SimpleAddButton(number: 10, addFunc: _addToCounter),
                   ],
                 ),
               ),
