@@ -91,9 +91,15 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
         ),
         title: Text(
           widget.title,
@@ -113,6 +119,68 @@ class _HomePageState extends State<HomePage>
             padding: const EdgeInsets.symmetric(horizontal: 10),
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                alignment: Alignment.center,
+                height: 100.0,
+                child: Text(
+                  "Point Counter",
+                  style: Theme.of(context).textTheme.displayMedium,
+                ),
+              ),
+              const Divider(),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: const Size.fromHeight(64),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                ),
+                child: const Text(
+                  "Single player",
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              ),
+              const Divider(),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: const Size.fromHeight(64),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                ),
+                child: const Text(
+                  "Multiplayer",
+                  style: TextStyle(fontSize: 24.0),
+                ),
+              ),
+              const Divider(),
+              const Spacer(),
+              const Divider(),
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0.0),
+                  ),
+                ),
+                child: const Text(
+                  "About",
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ),
+              const SizedBox(height: 8.0),
+            ],
+          ),
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -145,7 +213,8 @@ class _HomePageState extends State<HomePage>
                                 children: [
                                   Text(
                                     "Player ${index + 1}",
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   const Text(
                                     "68",
@@ -188,9 +257,9 @@ class _HomePageState extends State<HomePage>
                     padding: const EdgeInsets.all(8.0),
                     child: OutlinedButton.icon(
                       onPressed: () {},
-                      label: Text(
+                      label: const Text(
                         "120",
-                        style: Theme.of(context).textTheme.displaySmall,
+                        style: TextStyle(fontSize: 36.0),
                       ),
                       icon: const Icon(
                         Icons.flag,
