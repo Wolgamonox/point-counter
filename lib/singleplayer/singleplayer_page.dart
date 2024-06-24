@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:point_counter/common/drawer.dart';
 
 Color progressToColor(double progress) {
-  double hue = progress * (120.0 - 20.0) + 20.0;
-  return HSLColor.fromAHSL(1.0, hue, 0.5, 0.5).toColor();
+  double hue = progress * (120.0 - 10.0) + 10.0;
+  return HSLColor.fromAHSL(1.0, hue, 1.0, 0.4).toColor();
 }
 
 class SinglePlayerPage extends StatefulWidget {
