@@ -1,8 +1,12 @@
 import 'dart:collection';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:point_counter/common/drawer.dart';
+
+Color progressToColor(double progress) {
+  double hue = progress * (120.0 - 20.0) + 20.0;
+  return HSLColor.fromAHSL(1.0, hue, 0.5, 0.5).toColor();
+}
 
 class SinglePlayerPage extends StatefulWidget {
   const SinglePlayerPage({super.key});
@@ -13,6 +17,7 @@ class SinglePlayerPage extends StatefulWidget {
 
 class _SinglePlayerPageState extends State<SinglePlayerPage> {
   int _counter = 0;
+  int _goal = 0;
 
   int undoQueueSize = 20;
   final Queue<int> _lastNumbers = Queue<int>();
@@ -48,6 +53,47 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
     setState(() {
       _counter = 0;
     });
+  }
+
+  void _setGoal(int newGoal) {
+    setState(() {
+      _goal = newGoal.clamp(0, 999);
+    });
+  }
+
+  Future<void> _showSetGoalDialog() async {
+    TextEditingController controller = TextEditingController()..text;
+    return showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Goal"),
+        content: TextField(
+          autofocus: true,
+          controller: controller,
+          keyboardType: TextInputType.number,
+          onSubmitted: (value) {
+            _setGoal(int.parse(value));
+            Navigator.of(context).pop();
+          },
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: Navigator.of(context).pop,
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              _setGoal(int.parse(controller.value.text));
+              Navigator.of(context).pop();
+            },
+            child: const Text("Ok"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -96,10 +142,10 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: OutlinedButton.icon(
-                      onPressed: () {},
-                      label: const Text(
-                        "120",
-                        style: TextStyle(fontSize: 36.0),
+                      onPressed: () => _showSetGoalDialog(),
+                      label: Text(
+                        "$_goal",
+                        style: const TextStyle(fontSize: 36.0),
                       ),
                       icon: const Icon(
                         Icons.flag,
@@ -108,15 +154,17 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
                     ),
                   ),
                   const SizedBox(width: 8.0),
-                  const SizedBox.square(
-                    dimension: 30.0,
-                    child: CircularProgressIndicator(
-                      color: Colors.green,
-                      value: 0.80,
-                      strokeCap: StrokeCap.round,
-                      strokeWidth: 8.0,
-                    ),
-                  ),
+                  _goal > 0
+                      ? SizedBox.square(
+                          dimension: 30.0,
+                          child: CircularProgressIndicator(
+                            color: progressToColor(_counter / _goal),
+                            backgroundColor: Colors.grey.shade300,
+                            value: _counter / _goal,
+                            strokeWidth: 8.0,
+                          ),
+                        )
+                      : Container(),
                 ],
               ),
             ),
