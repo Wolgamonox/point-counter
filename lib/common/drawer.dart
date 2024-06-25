@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-void clearAndNavigate(BuildContext context, String path) {
-  while (context.canPop() == true) {
-    context.pop();
-  }
-  context.pushReplacement(path);
-}
+import 'router_utils.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});

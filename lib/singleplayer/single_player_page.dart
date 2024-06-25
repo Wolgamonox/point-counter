@@ -63,35 +63,54 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
 
   Future<void> _showSetGoalDialog() async {
     TextEditingController controller = TextEditingController()..text;
+
+    final _formKey = GlobalKey<FormState>();
+
     return showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Goal"),
-        content: TextField(
-          autofocus: true,
-          controller: controller,
-          keyboardType: TextInputType.number,
-          onSubmitted: (value) {
-            _setGoal(int.parse(value));
-            Navigator.of(context).pop();
-          },
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: Navigator.of(context).pop,
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _setGoal(int.parse(controller.value.text));
-              Navigator.of(context).pop();
+      builder: (context) => Form(
+        key: _formKey,
+        child: AlertDialog(
+          title: const Text("Goal"),
+          content: TextFormField(
+            autofocus: true,
+            controller: controller,
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a point Goal';
+              } else if (int.tryParse(value) == null ||
+                  int.tryParse(value)! < 0) {
+                return 'Please enter a positive number';
+              }
+              return null;
             },
-            child: const Text("Ok"),
+            onFieldSubmitted: (value) {
+              if (_formKey.currentState!.validate()) {
+                _setGoal(int.parse(controller.value.text));
+                Navigator.of(context).pop();
+              }
+            },
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+            ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _setGoal(int.parse(controller.value.text));
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text("Ok"),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -140,7 +159,7 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: OutlinedButton.icon(
                       onPressed: () => _showSetGoalDialog(),
                       label: Text(
