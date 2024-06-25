@@ -3,10 +3,8 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:point_counter/common/drawer.dart';
 
-Color progressToColor(double progress) {
-  double hue = progress.clamp(0.0, 1.0) * (120.0 - 10.0) + 10.0;
-  return HSLColor.fromAHSL(1.0, hue, 1.0, 0.4).toColor();
-}
+import '../common/add_button.dart';
+import '../common/utils.dart';
 
 class SinglePlayerPage extends StatefulWidget {
   const SinglePlayerPage({super.key});
@@ -177,9 +175,9 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
                       ? SizedBox.square(
                           dimension: 30.0,
                           child: CircularProgressIndicator(
+                            value: _counter / _goal,
                             color: progressToColor(_counter / _goal),
                             backgroundColor: Colors.grey.shade300,
-                            value: _counter / _goal,
                             strokeWidth: 8.0,
                           ),
                         )
@@ -232,36 +230,6 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SimpleAddButton extends StatelessWidget {
-  const SimpleAddButton(
-      {super.key, required this.number, required this.addFunc});
-
-  final int number;
-  final Function(int number) addFunc;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: FilledButton(
-        onPressed: () {
-          addFunc(number);
-        },
-        style: FilledButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0), // <-- Radius
-          ),
-        ),
-        child: Text(
-          number.toString(),
-          style: const TextStyle(
-            fontSize: 32,
-          ),
         ),
       ),
     );

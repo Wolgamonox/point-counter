@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +10,7 @@ import 'multiplayer/multi_player_start_page.dart';
 
 void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 /// The route configuration.
@@ -23,20 +24,35 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-        path: '/multi',
-        builder: (BuildContext context, GoRouterState state) {
-          return const MultiPlayerStartPage();
-        },
-        routes: [
-          GoRoute(
-              path: 'join/:gameId',
-              builder: (BuildContext context, GoRouterState state) {
-                int? gameId = state.pathParameters['gameId'] != null
-                    ? int.parse(state.pathParameters['gameId']!)
-                    : null;
-                return MultiPlayerPage(gameId: gameId);
-              }),
-        ]),
+      path: '/multi',
+      builder: (BuildContext context, GoRouterState state) {
+        return const MultiPlayerStartPage();
+      },
+      routes: [
+        GoRoute(
+          path: 'join/:gameId/:playerName',
+          builder: (BuildContext context, GoRouterState state) {
+            int? gameId = state.pathParameters['gameId'] != null
+                ? int.parse(state.pathParameters['gameId']!)
+                : null;
+
+            String? playerName = state.pathParameters['playerName'] != null
+                ? state.pathParameters['playerName']!
+                : null;
+
+            // If invalid: go back to start page
+            if (gameId == null || playerName == null) {
+              return const MultiPlayerStartPage();
+            }
+
+            return MultiPlayerPage(
+              gameId: gameId,
+              playerName: playerName,
+            );
+          },
+        ),
+      ],
+    ),
   ],
 );
 
