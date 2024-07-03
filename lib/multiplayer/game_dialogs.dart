@@ -1,45 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:point_counter/common/router_utils.dart';
+import 'package:logger/logger.dart';
+import '../common/router_utils.dart';
+import 'server/actions.dart';
 
-Future<void> createGame(
-  BuildContext context,
-  String playerName,
-  int goal,
-) async {
-  // Connect to base server websocket
-  final channel = WebSocketChannel.connect(
-    Uri.parse('ws://127.0.0.1:9000'),
-  );
+Future createGame(BuildContext context, String playerName, int goal) async {
+  final request = await createGameRequest(playerName, goal).run();
 
-  // Request a game creation
-  channel.sink.add("CreateGame:$goal");
+  if (context.mounted) {
+    request.match(
+      (err) {
+        final logger = Logger();
+        logger.e("Error Creating game: ${err.runtimeType}");
 
-  // Get game id
-  int gameId = 0;
-  await for (String event in channel.stream) {
-    if (event.isNotEmpty) {
-      gameId = int.parse(event);
-      break;
-    }
+        Navigator.of(context).pop();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+            "Error while creating the game",
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          )),
+        );
+      },
+      (gameId) => joinGame(context, playerName, gameId),
+    );
   }
-
-  print("Created game: $gameId by player: $playerName");
-  await channel.sink.close();
-
-  // launch a the game
-  joinGame(context, playerName, gameId);
 }
 
 void joinGame(BuildContext context, String playerName, int gameId) {
-  clearAndNavigate(context, '/multi/join/$gameId/$playerName');
+  if (context.mounted) {
+    clearAndNavigate(context, '/multi/join/$gameId/$playerName');
+  }
 }
 
 Future<void> showCreateGameDialog(BuildContext context) async {
   TextEditingController nameController = TextEditingController();
   TextEditingController goalController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   return showDialog<void>(
     context: context,
@@ -47,7 +45,7 @@ Future<void> showCreateGameDialog(BuildContext context) async {
       child: Padding(
         padding: const EdgeInsets.all(64.0),
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +70,7 @@ Future<void> showCreateGameDialog(BuildContext context) async {
                   return null;
                 },
                 textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                   labelText: "Player Name",
@@ -93,7 +91,7 @@ Future<void> showCreateGameDialog(BuildContext context) async {
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) {
-                  if (_formKey.currentState!.validate()) {
+                  if (formKey.currentState!.validate()) {
                     createGame(
                       context,
                       nameController.text.trim(),
@@ -101,7 +99,7 @@ Future<void> showCreateGameDialog(BuildContext context) async {
                     );
                   }
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.flag),
                   labelText: "Point Goal",
@@ -117,7 +115,7 @@ Future<void> showCreateGameDialog(BuildContext context) async {
                   ),
                   FilledButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
                         createGame(
                           context,
                           nameController.text.trim(),
@@ -141,7 +139,7 @@ Future<void> showJoinGameDialog(BuildContext context) async {
   TextEditingController gameIdController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   return showDialog<void>(
     context: context,
@@ -149,7 +147,7 @@ Future<void> showJoinGameDialog(BuildContext context) async {
       child: Padding(
         padding: const EdgeInsets.all(64.0),
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -174,7 +172,7 @@ Future<void> showJoinGameDialog(BuildContext context) async {
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) {
-                  if (_formKey.currentState!.validate()) {
+                  if (formKey.currentState!.validate()) {
                     joinGame(
                       context,
                       nameController.text.trim(),
@@ -182,7 +180,7 @@ Future<void> showJoinGameDialog(BuildContext context) async {
                     );
                   }
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.tag),
                   labelText: "Game ID",
@@ -203,7 +201,16 @@ Future<void> showJoinGameDialog(BuildContext context) async {
                   return null;
                 },
                 textInputAction: TextInputAction.done,
-                decoration: InputDecoration(
+                onFieldSubmitted: (_) {
+                  if (formKey.currentState!.validate()) {
+                    joinGame(
+                      context,
+                      nameController.text.trim(),
+                      int.parse(gameIdController.text),
+                    );
+                  }
+                },
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                   labelText: "Player Name",
@@ -219,7 +226,7 @@ Future<void> showJoinGameDialog(BuildContext context) async {
                   ),
                   FilledButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
+                      if (formKey.currentState!.validate()) {
                         joinGame(
                           context,
                           nameController.text.trim(),

@@ -10,7 +10,7 @@ import 'multiplayer/multi_player_start_page.dart';
 
 void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 /// The route configuration.
@@ -36,9 +36,7 @@ final GoRouter _router = GoRouter(
                 ? int.parse(state.pathParameters['gameId']!)
                 : null;
 
-            String? playerName = state.pathParameters['playerName'] != null
-                ? state.pathParameters['playerName']!
-                : null;
+            String? playerName = state.pathParameters['playerName'];
 
             // If invalid: go back to start page
             if (gameId == null || playerName == null) {
@@ -69,7 +67,7 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.teal,
           brightness: Brightness.light,
         ),
-        textTheme: GoogleFonts.bebasNeueTextTheme(),
+        // textTheme: GoogleFonts.bebasNeueTextTheme(),
       ),
       routerConfig: _router,
     );
