@@ -3,7 +3,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'exceptions.dart';
 
-const String address = 'ws://127.0.0.1';
+const String address = 'ws://192.168.1.135';
 
 TaskEither<ServerException, int> createGameRequest(
   String playerName,

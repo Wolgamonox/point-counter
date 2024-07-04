@@ -62,12 +62,12 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
   Future<void> _showSetGoalDialog() async {
     TextEditingController controller = TextEditingController()..text;
 
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     return showDialog<void>(
       context: context,
       builder: (context) => Form(
-        key: _formKey,
+        key: formKey,
         child: AlertDialog(
           title: const Text("Goal"),
           content: TextFormField(
@@ -84,7 +84,7 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
               return null;
             },
             onFieldSubmitted: (value) {
-              if (_formKey.currentState!.validate()) {
+              if (formKey.currentState!.validate()) {
                 _setGoal(int.parse(controller.value.text));
                 Navigator.of(context).pop();
               }
@@ -100,7 +100,7 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
+                if (formKey.currentState!.validate()) {
                   _setGoal(int.parse(controller.value.text));
                   Navigator.of(context).pop();
                 }
