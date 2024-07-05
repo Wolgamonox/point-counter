@@ -118,7 +118,7 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Scan code to join game."),
+          title: const Text("Scan code to join game"),
           content: Container(
             alignment: Alignment.center,
             height: 200.0,
@@ -237,6 +237,12 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
                       final ScrollController scrollController =
                           ScrollController();
 
+                      // Sort players so as to have the current player in front
+                      final currentPlayer = gameState.players.firstWhere((player) => player.name == widget.playerName);
+                      var players = gameState.players.toList();
+                      players.remove(currentPlayer);
+                      players.insert(0, currentPlayer);
+
                       return Column(
                         children: [
                           Expanded(
@@ -253,14 +259,20 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
                                 child: ListView.separated(
                                   controller: scrollController,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: gameState.players.length,
+                                  itemCount: players.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     double progress =
-                                        gameState.players[index].points /
+                                        players[index].points /
                                             gameState.goal;
 
+                                    Color? color;
+                                    if (index == 0) {
+                                      color = Theme.of(context).colorScheme.primaryContainer;
+                                    }
+
                                     return Card(
+                                      color: color,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(
@@ -274,13 +286,13 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Text(
-                                                  gameState.players[index].name,
+                                                  players[index].name,
                                                   style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
                                                 Text(
-                                                  "${gameState.players[index].points}",
+                                                  "${players[index].points}",
                                                   style: const TextStyle(
                                                       fontStyle:
                                                           FontStyle.italic),
@@ -295,7 +307,7 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
                                                 color:
                                                     progressToColor(progress),
                                                 backgroundColor:
-                                                    Colors.grey.shade300,
+                                                    Colors.grey.shade400,
                                                 strokeWidth: 6.0,
                                               ),
                                             ),

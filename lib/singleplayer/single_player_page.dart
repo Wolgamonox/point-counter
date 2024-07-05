@@ -177,7 +177,7 @@ class _SinglePlayerPageState extends State<SinglePlayerPage> {
                           child: CircularProgressIndicator(
                             value: _counter / _goal,
                             color: progressToColor(_counter / _goal),
-                            backgroundColor: Colors.grey.shade300,
+                            backgroundColor: Colors.grey.shade400,
                             strokeWidth: 8.0,
                           ),
                         )
