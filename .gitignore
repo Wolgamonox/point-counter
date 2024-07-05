@@ -32,6 +32,8 @@
 /build/
 
 # Web related
+web/
+windows/
 
 # Symbolication related
 app.*.symbols
