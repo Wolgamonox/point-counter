@@ -1,9 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import 'config.dart';
 import 'exceptions.dart';
-
-const String address = 'ws://127.0.0.1';
 
 TaskEither<ServerException, int> createGameRequest(
   String playerName,
@@ -11,7 +10,7 @@ TaskEither<ServerException, int> createGameRequest(
 ) {
   // Connect to base server websocket
   final channel = WebSocketChannel.connect(
-    Uri.parse("$address:9100"),
+    Uri.parse("$address:$basePort"),
   );
 
   final channelReady = TaskEither<ServerException, void>.tryCatch(
