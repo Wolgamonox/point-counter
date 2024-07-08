@@ -125,7 +125,7 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
             width: 200.0,
             child: QrImageView(
               data:
-                  'http://192.168.1.135:8000/#/multi/join/${widget.gameId}/Test',
+                  'http://127.0.0.1/#/multi/join/${widget.gameId}/Test',
               //TODO add a screen with join game and a name field
               version: QrVersions.auto,
               size: 200.0,
