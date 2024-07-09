@@ -1,2 +1,2 @@
-const String address = 'ws://192.168.1.135';
+const String address = 'pc.gastonwolf.art';
 const String basePort = '45300';

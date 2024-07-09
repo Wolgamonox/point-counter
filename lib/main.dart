@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:point_counter/multiplayer/pages.dart';
 
 import 'multiplayer/multi_player_page.dart';
 import 'singleplayer/single_player_page.dart';
@@ -30,7 +31,7 @@ final GoRouter _router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: 'join/:gameId/:playerName',
+          path: 'play/:gameId/:playerName',
           builder: (BuildContext context, GoRouterState state) {
             int? gameId = state.pathParameters['gameId'] != null
                 ? int.parse(state.pathParameters['gameId']!)
@@ -47,6 +48,28 @@ final GoRouter _router = GoRouter(
               gameId: gameId,
               playerName: playerName,
             );
+          },
+        ),
+        GoRoute(
+          path: 'join',
+          builder: (BuildContext context, GoRouterState state) {
+            return const JoinGamePage();
+          },
+        ),
+        GoRoute(
+          path: 'join/:gameId',
+          builder: (BuildContext context, GoRouterState state) {
+            int? gameId = state.pathParameters['gameId'] != null
+                ? int.parse(state.pathParameters['gameId']!)
+                : null;
+
+            return JoinGamePage(gameId: gameId);
+          },
+        ),
+        GoRoute(
+          path: 'create',
+          builder: (BuildContext context, GoRouterState state) {
+            return const CreateGamePage();
           },
         ),
       ],

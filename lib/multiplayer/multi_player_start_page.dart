@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:point_counter/common/drawer.dart';
-
-import 'game_dialogs.dart';
 
 class MultiPlayerStartPage extends StatelessWidget {
   const MultiPlayerStartPage({super.key});
@@ -36,7 +35,7 @@ class MultiPlayerStartPage extends StatelessWidget {
                 height: 72.0,
                 width: 256.0,
                 child: FilledButton(
-                  onPressed: () => showCreateGameDialog(context),
+                  onPressed: () => context.go("/multi/create"),
                   child: const Text(
                     "Create Game",
                     textAlign: TextAlign.center,
@@ -49,7 +48,7 @@ class MultiPlayerStartPage extends StatelessWidget {
                 height: 72.0,
                 width: 256.0,
                 child: ElevatedButton(
-                  onPressed: () => showJoinGameDialog(context),
+                  onPressed: () => context.go("/multi/join"),
                   child: const Text(
                     "Join Game",
                     style: TextStyle(fontSize: 32.0),

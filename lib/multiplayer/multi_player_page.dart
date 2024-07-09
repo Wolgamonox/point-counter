@@ -14,6 +14,7 @@ import '../common/add_button.dart';
 import '../common/drawer.dart';
 import 'model/game_state.dart';
 import 'server/actions.dart';
+import 'server/config.dart';
 import 'server/exceptions.dart';
 
 // TODO handle server crashing ?
@@ -125,8 +126,7 @@ class _MultiPlayerPageState extends State<MultiPlayerPage> {
             width: 200.0,
             child: QrImageView(
               data:
-                  'http://127.0.0.1/#/multi/join/${widget.gameId}/Test',
-              //TODO add a screen with join game and a name field
+                  'http://$address/#/multi/join/${widget.gameId}',
               version: QrVersions.auto,
               size: 200.0,
             ),

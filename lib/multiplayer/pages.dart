@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import '../common/router_utils.dart';
 import 'server/actions.dart';
@@ -12,7 +13,7 @@ Future createGame(BuildContext context, String playerName, int goal) async {
         final logger = Logger();
         logger.e("Error Creating game: ${err.runtimeType}");
 
-        Navigator.of(context).pop();
+        context.go("/multi");
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -29,20 +30,27 @@ Future createGame(BuildContext context, String playerName, int goal) async {
 
 void joinGame(BuildContext context, String playerName, int gameId) {
   if (context.mounted) {
-    clearAndNavigate(context, '/multi/join/$gameId/$playerName');
+    clearAndNavigate(context, '/multi/play/$gameId/$playerName');
   }
 }
 
-Future<void> showCreateGameDialog(BuildContext context) async {
+class CreateGamePage extends StatefulWidget {
+  const CreateGamePage({super.key});
+
+  @override
+  State<CreateGamePage> createState() => _CreateGamePageState();
+}
+
+class _CreateGamePageState extends State<CreateGamePage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController goalController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) => Dialog.fullscreen(
-      child: Padding(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
         padding: const EdgeInsets.all(64.0),
         child: Form(
           key: formKey,
@@ -110,7 +118,7 @@ Future<void> showCreateGameDialog(BuildContext context) async {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: Navigator.of(context).pop,
+                    onPressed: () => context.go("/multi"),
                     child: const Text('Cancel'),
                   ),
                   FilledButton(
@@ -131,20 +139,36 @@ Future<void> showCreateGameDialog(BuildContext context) async {
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
-Future<void> showJoinGameDialog(BuildContext context) async {
+class JoinGamePage extends StatefulWidget {
+  const JoinGamePage({super.key, this.gameId});
+
+  final int? gameId;
+
+  @override
+  State<JoinGamePage> createState() => _JoinGamePageState();
+}
+
+class _JoinGamePageState extends State<JoinGamePage> {
   TextEditingController gameIdController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
 
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) => Dialog.fullscreen(
-      child: Padding(
+  @override
+  void initState() {
+    // Set initial value if the game id was provided through navigation
+    gameIdController.text = widget.gameId != null ? "${widget.gameId}" : "";
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
         padding: const EdgeInsets.all(64.0),
         child: Form(
           key: formKey,
@@ -221,7 +245,7 @@ Future<void> showJoinGameDialog(BuildContext context) async {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: Navigator.of(context).pop,
+                    onPressed: () => context.go("/multi"),
                     child: const Text('Cancel'),
                   ),
                   FilledButton(
@@ -242,6 +266,6 @@ Future<void> showJoinGameDialog(BuildContext context) async {
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

@@ -10,7 +10,7 @@ TaskEither<ServerException, int> createGameRequest(
 ) {
   // Connect to base server websocket
   final channel = WebSocketChannel.connect(
-    Uri.parse("$address:$basePort"),
+    Uri.parse("ws://$address:$basePort"),
   );
 
   final channelReady = TaskEither<ServerException, void>.tryCatch(
@@ -42,7 +42,7 @@ TaskEither<ServerException, WebSocketChannel> getGameChannel(
   int gameId,
 ) {
   final channel = WebSocketChannel.connect(
-    Uri.parse('$address:$gameId'),
+    Uri.parse('ws://$address:$gameId'),
   );
 
   final channelReady = TaskEither<ServerException, void>.tryCatch(
