@@ -8,5 +8,5 @@ COPY . .
 RUN flutter pub get
 RUN flutter build web
 
-FROM nginx:latest as production
+FROM arm64v8/nginx:latest as production
 COPY --from=build /app/build/web/ /usr/share/nginx/html/
